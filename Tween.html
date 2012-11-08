@@ -126,6 +126,10 @@
                 imagesContainer.addChild(currentImg);
             }
 
+            //forcing the not existent property on easelJS
+            imagesContainer.height = numY + 450;
+            imagesContainer.width = numY + 750;
+
             imagesContainer.onPress = pressHandler;
             stage.addChild(imagesContainer);
 
@@ -137,12 +141,21 @@
         function pressHandler(e){
             var initalX = e.stageX-e.target.x;
             var initalY = e.stageY-e.target.y;
-            console.log(e);
             //
             e.onMouseMove = function(ev){
+                var numProcessedX = ev.stageX-initalX;
+                var numProcessedY = ev.stageY-initalY;
 
-                TweenMax.to(e.target, 1.5, {x:ev.stageX-initalX, ease: Strong.easeOut});
-                TweenMax.to(e.target, 1.5, {y:ev.stageY-initalY, ease: Strong.easeOut});
+                if(numProcessedY > 0) {
+                    numProcessedY = 0;
+                } else if (numProcessedY < - (imagesContainer.height - (SCREEN_HEIGHT)) ) {
+                   numProcessedY = - (imagesContainer.height- SCREEN_HEIGHT);
+                }
+
+
+
+                TweenMax.to(e.target, 1.2, {x:numProcessedX, ease: Strong.easeOut});
+                TweenMax.to(e.target, 1.2, {y:numProcessedY, ease: Strong.easeOut});
 
                 update = true;
             }
