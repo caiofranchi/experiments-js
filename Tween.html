@@ -2,8 +2,167 @@
 <html>
 <head>
     <title></title>
+    <script src="http://code.createjs.com/easeljs-0.5.0.min.js"></script>
+    <!--<script src="http://code.createjs.com/movieclip-0.5.0.min.js"></script>-->
+    <script src="https://raw.github.com/mrdoob/stats.js/master/src/Stats.js"></script> <!-- STATS -->
+
+
+
+    <script src="js/TweenMax.min.js"></script>
+    <script src="js/easing/EasePack.min.js"></script>
 </head>
 <body>
+    <canvas id="canvas" width="640" height="480">
 
+    </canvas>
+    <script src="https://raw.github.com/caiofranchi/fsloader/master/build/fsloader-0.1.js"></script>
+    <script>
+
+        var stats = new Stats();
+        stats.setMode(1); // 0: fps, 1: ms
+
+        // Align top-left
+        stats.domElement.style.position = 'absolute';
+        stats.domElement.style.left = '0px';
+        stats.domElement.style.top = '0px';
+
+        document.body.appendChild( stats.domElement );
+
+        setInterval( function () {
+
+            stats.begin();
+
+            // your code goes here
+
+            stats.end();
+
+        }, 1000 / 60 );
+
+    </script>
+
+    <script>
+
+
+        var SCREEN_WIDTH = window.innerWidth,
+                SCREEN_HEIGHT = window.innerHeight;
+        var CANVAS = document.getElementById("canvas");
+       // var stageWidth = SCREEN_WIDTH;
+       // var stageHeight = SCREEN_HEIGHT;
+        var stage;
+        var update = true;
+        var shape1, shape2, shape3;
+
+
+        var imagesContainer = new createjs.Container();
+
+        var MainLoader = new FSLoader();
+        MainLoader.load("img/test.jpg",{oncomplete:onCompleteLoadingImage});
+        var imgLoaded;
+
+        function onCompleteLoadingImage(){
+            imgLoaded = this.data;
+            //
+            init();
+        }
+
+        function init(){
+
+            //new stage
+            stage = new createjs.Stage(CANVAS);
+            stage.enableMouseOver();
+
+            window.addEventListener( 'resize', onWindowResize, false );
+            onWindowResize();
+            //text
+            /*var text = new createjs.Text("Drag and drop the shapes", "30px Arial", "#000000");
+            text.x = stageWidth/2 - text.getMeasuredWidth()/2;
+            text.y = 80;
+            stage.addChild(text);*/
+
+            //circle
+            /*shape1 = new createjs.Shape();
+            shape1.graphics.beginFill(createjs.Graphics.getRGB(0,255,0));
+            shape1.graphics.drawCircle(0,0,40);
+            shape1.x = stageWidth/2;
+            shape1.y = stageHeight/2;
+            shape1.onPress = pressHandler;
+            stage.addChild(shape1);
+
+            //rectangle
+            shape2 = new createjs.Shape();
+            shape2.graphics.beginFill(createjs.Graphics.getRGB(255,0,0));
+            shape2.graphics.rect(0,0,100,60);
+            shape2.regX = 50;
+            shape2.regY = 30;
+            shape2.x = stageWidth/2 - 150;
+            shape2.y = stageHeight/2;
+            shape2.onPress = pressHandler;
+            stage.addChild(shape2);
+            */
+            /*//poly star
+            shape3 = new createjs.Shape();
+            shape3.graphics.beginFill(createjs.Graphics.getRGB(0,0,255));
+            shape3.graphics.drawPolyStar(0, 0, 50, 5, 0.6, -90);
+            shape3.x = stageWidth/2 + 150;
+            shape3.y = stageHeight/2;
+            shape3.onPress = pressHandler;
+            imagesContainer.addChild(shape3);
+            */
+            var currentImg;
+            var numY = 0;
+            var numX = 0;
+            for(var i=0;i<40;i++) {
+                currentImg = new createjs.Bitmap(imgLoaded);
+                currentImg.x = numX;
+                currentImg.y = numY;
+                if(i===10 || i===20 || i===30) {
+                    numY += 450;
+                    numX = 0;
+                } else {
+                    numX +=750;
+                }
+
+                //currentImg.on
+                imagesContainer.addChild(currentImg);
+            }
+
+            imagesContainer.onPress = pressHandler;
+            stage.addChild(imagesContainer);
+
+            //draw to the canvas
+            stage.update();
+            createjs.Ticker.addListener(window);
+        }
+
+        function pressHandler(e){
+            var initalX = e.stageX-e.target.x;
+            var initalY = e.stageY-e.target.y;
+            console.log(e);
+            //
+            e.onMouseMove = function(ev){
+
+                TweenMax.to(e.target, 1.5, {x:ev.stageX-initalX, ease: Strong.easeOut});
+                TweenMax.to(e.target, 1.5, {y:ev.stageY-initalY, ease: Strong.easeOut});
+
+                update = true;
+            }
+        }
+
+        function onWindowResize(e) {
+            SCREEN_WIDTH = window.innerWidth;
+            SCREEN_HEIGHT = window.innerHeight;
+
+            CANVAS.width = SCREEN_WIDTH;
+            CANVAS.height = SCREEN_HEIGHT;
+        }
+
+        function tick(){
+            if(update){
+                //update = false;
+                stage.update();
+            }
+        }
+
+    </script>
 </body>
 </html>
