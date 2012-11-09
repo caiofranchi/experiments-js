@@ -19,7 +19,7 @@
     <script>
 
         var stats = new Stats();
-        stats.setMode(1); // 0: fps, 1: ms
+        stats.setMode(0); // 0: fps, 1: ms
 
         // Align top-left
         stats.domElement.style.position = 'absolute';
@@ -51,6 +51,8 @@
         var stage;
         var update = true;
         var shape1, shape2, shape3;
+        var isDragging = false;
+        var isPressed = false;
 
 
         var imagesContainer = new createjs.Container();
@@ -113,6 +115,7 @@
             var numX = 0;
             for(var i=0;i<40;i++) {
                 currentImg = new createjs.Bitmap(imgLoaded);
+                currentImg.id = "img"+i;
                 currentImg.x = numX;
                 currentImg.y = numY;
                 if(i===10 || i===20 || i===30) {
@@ -121,6 +124,8 @@
                 } else {
                     numX +=750;
                 }
+
+                //currentImg.onMouseOver = pressImage;
 
                 //currentImg.on
                 imagesContainer.addChild(currentImg);
@@ -131,6 +136,7 @@
             imagesContainer.width = numY + 750;
 
             imagesContainer.onPress = pressHandler;
+
             stage.addChild(imagesContainer);
 
             //draw to the canvas
@@ -138,9 +144,14 @@
             createjs.Ticker.addListener(window);
         }
 
+        function pressImage(e) {
+            console.log(e);
+        }
+
         function pressHandler(e){
             var initalX = e.stageX-e.target.x;
             var initalY = e.stageY-e.target.y;
+            isPressed = true;
             //
             e.onMouseMove = function(ev){
                 var numProcessedX = ev.stageX-initalX;
@@ -152,12 +163,47 @@
                    numProcessedY = - (imagesContainer.height- SCREEN_HEIGHT);
                 }
 
+                //getting difference for the ske effect
+                var numDifX = e.target.x - numProcessedX;
+                var numDifY = e.target.y - numProcessedY;
+                var numSkewX,
+                        numSkewY;
 
+                if(numDifX<0) {
+                    numSkewX = -2;
+                    numDifX = - (numDifX);
+                } else {
+                    numSkewX = 2;
+                }
 
-                TweenMax.to(e.target, 1.2, {x:numProcessedX, ease: Strong.easeOut});
-                TweenMax.to(e.target, 1.2, {y:numProcessedY, ease: Strong.easeOut});
+                if(numDifY<0) {
+                    numSkewY = -2;
+                    numDifY = - (numDifY);
+                } else {
+                    numSkewY = 2;
+                }
+
+                if(numDifX>numDifY) {
+                    numSkewY = 0;
+                }else {
+                    numSkewX = 0;
+                }
+
+                isDragging = true;
+
+                TweenMax.to(e.target, 2, {x:numProcessedX,y:numProcessedY, ease: Expo.easeOut }); //skewX:numSkewX,
 
                 update = true;
+            }
+
+            e.onMouseUp = function(ev) {
+                if(!isDragging) {
+                    console.log("Clicked on:"+imagesContainer.getObjectUnderPoint(e.stageX,e.stageY).id);
+                }
+
+                TweenMax.to(e.target, 2, {skewX:0, skewY:0, ease: Strong.easeOut});
+                isDragging = false;
+                isPressed = true;
             }
         }
 
