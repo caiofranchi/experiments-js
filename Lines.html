@@ -25,7 +25,7 @@
         </select>
     </span>
 </div>
-<script src="js/sketch.min.js"></script> <!-- SKETCH-->
+<script src="js/sketch.js"></script> <!-- SKETCH-->
 <script src="http://hakim.se/assets/promoter/promoter.js"></script>
 <script>
 var stats = new Stats();
@@ -155,14 +155,14 @@ window.requestAnimFrame = (function(){
  */
 var Radar = (function(){
 
-    var NODES_X = Math.ceil( window.innerWidth * 0.02 ),
-            NODES_Y = Math.ceil( window.innerHeight * 0.02 ),
+    var NODES_X = Math.ceil( window.innerWidth * 0.01 ),
+            NODES_Y = Math.ceil( window.innerHeight * 0.01 ),
 
             BEAT_VELOCITY = 0.01,
             BEAT_FREQUENCY = 2,
             BEAT_LIMIT = 3,
 
-    // Distance threshold between active node and beat
+            // Distance threshold between active node and beat
             ACTIVATION_DISTANCE = 10,
 
     // Number of neighboring nodes to push aside on impact
